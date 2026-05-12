@@ -93,7 +93,7 @@ $pacientes = $stmt->fetchAll();
                         <td class="px-5 py-3 font-medium text-gray-800"><?= htmlspecialchars($p['nome']) ?></td>
                         <td class="px-5 py-3 text-gray-600"><?= htmlspecialchars($p['cpf']) ?></td>
                         <td class="px-5 py-3 text-gray-600"><?= htmlspecialchars($p['telefone']) ?></td>
-                        <td class="px-5 py-3 text-gray-600"><?= date('d/m/Y', strtotime($p['data_nascimento'])) ?></td>
+                        <td class="px-5 py-3 text-gray-600"><?= date('d/m/Y', strtotime($p['data_nasc'])) ?></td>
                         <td class="px-5 py-3 flex gap-2">
                             <a href="editar.php?id=<?= $p['id'] ?>" class="bg-yellow-100 text-yellow-700 text-xs px-3 py-1 rounded-lg hover:bg-yellow-200 transition">Editar</a>
                             <a href="excluir.php?id=<?= $p['id'] ?>" onclick="return confirm('Tem certeza que deseja excluir este paciente?')" class="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-lg hover:bg-red-200 transition">Excluir</a>
