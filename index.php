@@ -81,7 +81,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center gap-4">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 transition duration-200">
             <div class="bg-green-100 rounded-full p-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
@@ -93,7 +93,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
             </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center gap-4">
+        <div class="bg-white rounded-xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 transition duration-200">
             <div class="bg-purple-100 rounded-full p-3">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
