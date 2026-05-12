@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+
+  php:
+    build: .
+    container_name: hospital_php
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+    networks:
+      - hospital_net
+
+  mysql:
+    image: mysql:8.0
+    container_name: hospital_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: hospital_db
+      MYSQL_USER: hospital_user
+      MYSQL_PASSWORD: hospital123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - hospital_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: hospital_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: root123
+    depends_on:
+      - mysql
+    networks:
+      - hospital_net
+
+volumes:
+  mysql_data:
+
+networks:
+  hospital_net:
+    driver: bridge
