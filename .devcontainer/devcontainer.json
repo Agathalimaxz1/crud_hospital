@@ -1,6 +1,5 @@
 {
   "name": "Hospital PHP",
   "dockerComposeFile": "../docker-compose.yml",
-  "service": "php",
-  "workspaceFolder": "/var/www/html"
+  "service": "php"
 }
