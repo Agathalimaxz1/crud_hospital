@@ -25,7 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($data_hora < date('Y-m-d\TH:i')) {
         $erro = "A data da consulta não pode ser no passado.";
     } else {
-        // Verifica conflito de horário do médico
         $stmt = $conexao->prepare("SELECT id FROM consultas WHERE medico_id = :medico_id AND data_hora = :data_hora AND status != 'cancelada'");
         $stmt->execute([':medico_id' => $medico_id, ':data_hora' => $data_hora]);
         if ($stmt->fetch()) {
