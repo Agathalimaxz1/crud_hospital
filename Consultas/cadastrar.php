@@ -9,29 +9,31 @@ $conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital
 $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-$pacientes = $conexao->query("SELECT id, nome FROM pacientes ORDER BY nome")->fetchAll();
-$medicos   = $conexao->query("SELECT id, nome, especialidade FROM medicos ORDER BY nome")->fetchAll();
+$pacientes = $conexao->query("SELECT id, nome FROM pacientes ORDER BY nome")->fetchAll();//busca pacientes cadastrados por ordem alfabética
+$medicos   = $conexao->query("SELECT id, nome, especialidade FROM medicos ORDER BY nome")->fetchAll();//busca medicos por ordem alfabética
 
 $erro = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {//executa so se for enviado
+//recebendo dados
     $paciente_id  = $_POST['paciente_id'];
     $medico_id    = $_POST['medico_id'];
     $data_hora    = $_POST['data_hora'];
-    $observacoes  = trim($_POST['observacoes']);
+    $observacoes  = trim($_POST['observacoes']);//obs extra
 
     if (empty($paciente_id) || empty($medico_id) || empty($data_hora)) {
         $erro = "Preencha todos os campos obrigatórios.";
     } elseif ($data_hora < date('Y-m-d\TH:i')) {
         $erro = "A data da consulta não pode ser no passado.";
     } else {
+        //procura consultas existentes, como mesmo médico, horário ou consulta cancelada
         $stmt = $conexao->prepare("SELECT id FROM consultas WHERE medico_id = :medico_id AND data_hora = :data_hora AND status != 'cancelada'");
-        $stmt->execute([':medico_id' => $medico_id, ':data_hora' => $data_hora]);
-        if ($stmt->fetch()) {
+        $stmt->execute([':medico_id' => $medico_id, ':data_hora' => $data_hora]);//executa
+        if ($stmt->fetch()) {//se encontrou consulta
             $erro = "Este médico já tem uma consulta agendada nesse horário.";
-        } else {
+        } else {//se tudo ocorrer bem: cria consulta
             $stmt = $conexao->prepare("INSERT INTO consultas (paciente_id, medico_id, data_hora, observacoes, status) VALUES (:paciente_id, :medico_id, :data_hora, :observacoes, 'agendada')");
-            $stmt->execute([
+            $stmt->execute([//envia os dados para o banco
                 ':paciente_id' => $paciente_id,
                 ':medico_id'   => $medico_id,
                 ':data_hora'   => $data_hora,

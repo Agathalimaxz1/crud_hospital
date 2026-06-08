@@ -9,27 +9,27 @@ $conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital
 $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-$id = $_GET['id'] ?? null;
+$id = $_GET['id'] ?? null;//pega id enviado
 if (!$id) {
     header('Location: listar.php');
     exit;
 }
-
+//busca consultas, que correspondem ao ID
 $stmt = $conexao->prepare("SELECT * FROM consultas WHERE id = :id");
 $stmt->execute([':id' => $id]);
-$consulta = $stmt->fetch();
+$consulta = $stmt->fetch();//obtem dados
 
 if (!$consulta) {
     header('Location: listar.php');
     exit;
 }
-
+//carregando pacientes e medicos
 $pacientes = $conexao->query("SELECT id, nome FROM pacientes ORDER BY nome")->fetchAll();
 $medicos   = $conexao->query("SELECT id, nome, especialidade FROM medicos ORDER BY nome")->fetchAll();
 
 $erro = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {//recebendo os novos valores
     $paciente_id = $_POST['paciente_id'];
     $medico_id   = $_POST['medico_id'];
     $data_hora   = $_POST['data_hora'];
@@ -38,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($paciente_id) || empty($medico_id) || empty($data_hora) || empty($status)) {
         $erro = "Preencha todos os campos obrigatórios.";
-    } else {
+    } else {//procura consulta que tenha o mesmo médico e horario, e que nao esteja cancelada
         $stmt = $conexao->prepare("SELECT id FROM consultas WHERE medico_id = :medico_id AND data_hora = :data_hora AND status != 'cancelada' AND id != :id");
         $stmt->execute([':medico_id' => $medico_id, ':data_hora' => $data_hora, ':id' => $id]);
         if ($stmt->fetch()) {

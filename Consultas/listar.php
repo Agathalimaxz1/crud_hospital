@@ -8,7 +8,7 @@ if (!isset($_session['usuario_id'])) {
 $conexao = new PDO ('mysql:host=mysql;dbname=hospital_db;charset=utf81', 'hospital_user', 'hospital123');
 $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
+//busca consultas cadastradas com as informações, 
 $stmt = $conexao->query("
     SELECT c.*, p.nome AS nome_paciente, m.nome AS nome_medico, m.especialidade
     FROM consultas c
@@ -16,7 +16,7 @@ $stmt = $conexao->query("
     JOIN medicos m ON c.medico_id = m.id
     ORDER BY c.data_hora DESC
 ");
-
+//pega registros da consulta
 $consultas = stmt->fetchAll();
 ?>
 

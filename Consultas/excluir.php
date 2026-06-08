@@ -15,7 +15,7 @@ if (!$id) {
     exit;
 }
 
-$stmt = $conexao->prepare("DELETE FROM consultas WHERE id = :id");
+$stmt = $conexao->prepare("DELETE FROM consultas WHERE id = :id");//deletando consulta correspondente ao ID
 $stmt->execute([':id' => $id]);
 
 header('Location: listar.php?sucesso=Consulta excluída com sucesso!');

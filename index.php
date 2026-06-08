@@ -1,18 +1,21 @@
 <?php
+// inicia a sessão e vê se o usuario está logado
 session_start();
+//verifica se existe um usuario logado direcionando ele pra pagina de login
 if (!isset($_SESSION['usuario_id'])) {
     header('Location: login.php');
-    exit;
+    exit; //interrompe execução do código
 }
 
-require_once 'config/conexao.php';
+require_once 'config/conexao.php';//importa arquivo responsável pela conexao
+//conexao com o banco
 $conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//gera exceçoes com caso de erro no banco
+$conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);//retorna resultados como array associativos
 
-$total_pacientes = $conexao->query("SELECT COUNT(*) FROM pacientes")->fetchColumn();
-$total_medicos   = $conexao->query("SELECT COUNT(*) FROM medicos")->fetchColumn();
-$total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColumn();
+$total_pacientes = $conexao->query("SELECT COUNT(*) FROM pacientes")->fetchColumn();//quantidade pacientes
+$total_medicos   = $conexao->query("SELECT COUNT(*) FROM medicos")->fetchColumn();//quantidade de medicos
+$total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColumn();//quantidade de consultas
 ?>
 
 <!DOCTYPE html>
@@ -44,8 +47,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
     </div>
 </nav>
 
-<!-- Menu -->
-<div class="bg-blue-900">
+    <div class="bg-blue-900">
     <div class="px-4 flex gap-1 overflow-x-auto">
         <a href="index.php" class="text-white text-sm px-4 py-3 border-b-2 border-white font-medium whitespace-nowrap">Painel</a>
         <a href="pacientes/listar.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Pacientes</a>
@@ -57,16 +59,13 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
     </div>
 </div>
 
-<!-- Conteúdo -->
-<div class="max-w-7xl mx-auto px-4 py-12">
-
-    <!-- Boas vindas -->
-    <div class="mb-8">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+    
+<div class="mb-8">
         <h1 class="text-2xl font-bold text-gray-800 shadow">Painel do Administrador!</h1>
         <p class="text-gray-500 text-base mt-1">Bem-vindo ao sistema do Hospital São José</p>
     </div>
-
-    <!-- Cards de contagem -->
+    
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
 
         <div class="bg-white rounded-xl shadow-lg p-6 flex items-center gap-4 hover:scale-105 transition duration-200">
@@ -107,8 +106,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
 
     </div>
 
-    <!-- Seção Pacientes -->
-    <div class="mb-8">
+        <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold text-gray-700 shadow-lg">Pacientes</h2>
             <a href="pacientes/listar.php" class="text-blue-600 text-sm hover:underline">Ver todos →</a>
@@ -138,8 +136,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
             </a>
         </div>
     </div>
-
-    <!-- Seção Médicos -->
+    
     <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold text-gray-700 shadow-lg">Médicos</h2>
@@ -171,7 +168,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
         </div>
     </div>
 
-    <!-- Seção Consultas -->
+   
     <div class="mb-8">
         <div class="flex items-center justify-between mb-4">
             <h2 class="text-lg font-bold text-gray-700 shadow-lg">Consultas</h2>
@@ -205,7 +202,7 @@ $total_consultas = $conexao->query("SELECT COUNT(*) FROM consultas")->fetchColum
 
 </div>
 
-<!-- Rodapé -->
+
 <footer class="text-center text-gray-400 text-xs py-6">
     © 2026 Hospital São José — Sistema Interno
 </footer>

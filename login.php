@@ -1,37 +1,38 @@
 <?php
+//sessão serve pra guardar informaçoes do usuario enquanto ele esta no sistema
 session_start();
 
-if (isset($_SESSION['usuario_id'])) {
+if (isset($_SESSION['usuario_id'])) { //se o usuario ja fez login
     header('Location: index.php');
     exit;
 }
 
 require_once 'config/conexao.php';
 
-$erro = '';
+$erro = ''; //armazena mensagens de erro
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $email = trim($_POST['email']);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') { //confirma se o botao de login foi clicado
+//pega dados digitados
+    $email = trim($_POST['email']); //trim remove espaços extras
     $senha = $_POST['senha'];
 
-    if (empty($email) || empty($senha)) {
+    if (empty($email) || empty($senha)) { //se algum campo ta vazio
         $erro = "Preencha todos os campos.";
     } else {
         $conexao = new PDO("mysql:host=mysql;dbname=hospital_db;charset=utf8", "hospital_user", "hospital123");
         $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-        $stmt = $conexao->prepare("SELECT * FROM usuarios WHERE email = :email");
+        $stmt = $conexao->prepare("SELECT * FROM usuarios WHERE email = :email");//procura usuario pelo email informado
         $stmt->execute([':email' => $email]);
-        $usuario = $stmt->fetch();
+        $usuario = $stmt->fetch();//busca
 
-        if ($usuario && password_verify($senha, $usuario['senha'])) {
+        if ($usuario && password_verify($senha, $usuario['senha'])) { //se email existe, compara senha digitada e a do banco
             $_SESSION['usuario_id']   = $usuario['id'];
             $_SESSION['usuario_nome'] = $usuario['nome'];
             $_SESSION['usuario_perfil'] = $usuario['perfil'];
 
-            header('Location: index.php');
+            header('Location: index.php');//redireciona
             exit;
         } else {
             $erro = "Email ou senha incorretos.";
