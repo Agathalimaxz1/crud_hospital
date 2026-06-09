@@ -6,39 +6,31 @@ if (!isset($_SESSION['usuario_id'])) {
 }
 
 require_once '../config/conexao.php';
-$conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
 $erro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nome            = trim($_POST['nome']);
-    $cpf             = trim($_POST['cpf']);
-    $data_nascimento = $_POST['data_nasc'];
-    $telefone        = trim($_POST['telefone']);
-    $endereco        = trim($_POST['endereco']);
+    $nome         = trim($_POST['nome']);
+    $crm          = trim($_POST['crm']);
+    $especialidade = trim($_POST['especialidade']);
+    $telefone     = trim($_POST['telefone']);
 
-    // Validação
-    if (empty($nome) || empty($cpf) || empty($data_nascimento) || empty($telefone) || empty($endereco)) {
-        $erro = "Preencha todos os campos.";
-    } elseif (strlen(preg_replace('/\D/', '', $cpf)) !== 11) {
-        $erro = "CPF inválido — deve ter 11 dígitos.";
+    if (empty($nome) || empty($crm) || empty($especialidade) || empty($telefone)) {
+        $erro = "Preencha TODOS os campos.";
     } else {
-        $stmt = $conexao->prepare("SELECT id FROM pacientes WHERE cpf = :cpf");
-        $stmt->execute([':cpf' => $cpf]);
+        $stmt = $conexao->prepare("SELECT id FROM medicos WHERE crm = :crm");
+        $stmt->execute([':crm' => $crm]);
         if ($stmt->fetch()) {
-            $erro = "Já existe um paciente cadastrado com esse CPF.";
+            $erro = "Já existe um médico cadastrado com esse CRM.";
         } else {
-            $stmt = $conexao->prepare("INSERT INTO pacientes (nome, cpf, data_nasc, telefone, endereco) VALUES (:nome, :cpf, :data_nasc, :telefone, :endereco)");
+            $stmt = $conexao->prepare("INSERT INTO medicos (nome, crm, especialidade, telefone) VALUES (:nome, :crm, :especialidade, :telefone)");
             $stmt->execute([
-                ':nome'            => $nome,
-                ':cpf'             => $cpf,
-                ':data_nasc'       => $data_nascimento,
-                ':telefone'        => $telefone,
-                ':endereco'        => $endereco,
+                ':nome'          => $nome,
+                ':crm'           => $crm,
+                ':especialidade' => $especialidade,
+                ':telefone'      => $telefone,
             ]);
-            header('Location: listar.php?sucesso=Paciente cadastrado com sucesso!');
+            header('Location: listar.php?sucesso=sucesso');
             exit;
         }
     }
@@ -50,7 +42,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Paciente — HSJ</title>
+    <title>Novo Médico — HSJ</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-200 min-h-screen">
@@ -76,8 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="bg-blue-900">
     <div class="px-4 flex gap-1 overflow-x-auto">
         <a href="../index.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Painel</a>
-        <a href="listar.php" class="text-white text-sm px-4 py-3 border-b-2 border-white font-medium whitespace-nowrap">Pacientes</a>
-        <a href="../medicos/listar.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Médicos</a>
+        <a href="../pacientes/listar.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Pacientes</a>
+        <a href="listar.php" class="text-white text-sm px-4 py-3 border-b-2 border-white font-medium whitespace-nowrap">Médicos</a>
         <a href="../consultas/listar.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Consultas</a>
         <?php if ($_SESSION['usuario_perfil'] === 'admin'): ?>
         <a href="../usuarios/listar.php" class="text-blue-300 hover:text-white text-sm px-4 py-3 border-b-2 border-transparent hover:border-blue-300 transition whitespace-nowrap">Usuários</a>
@@ -87,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="max-w-2xl mx-auto px-4 py-8">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-800">Novo Paciente</h1>
-        <p class="text-gray-500 text-sm mt-1">Preencha os dados para cadastrar um novo paciente</p>
+        <h1 class="text-2xl font-bold text-gray-800">Novo Médico</h1>
+        <p class="text-gray-500 text-sm mt-1">Preencha os dados para cadastrar um novo médico</p>
     </div>
 
     <?php if ($erro): ?>
@@ -106,13 +98,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">CPF</label>
-                <input type="text" name="cpf" required placeholder="000.000.000-00" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['cpf']) ? htmlspecialchars($_POST['cpf']) : '' ?>">
+                <label class="block text-sm font-medium text-gray-600 mb-1">CRM</label>
+                <input type="text" name="crm" required placeholder="CRM/UF 000000" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['crm']) ? htmlspecialchars($_POST['crm']) : '' ?>">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Data de nascimento</label>
-                <input type="date" name="data_nasc" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['data_nascimento']) ? htmlspecialchars($_POST['data_nascimento']) : '' ?>">
+                <label class="block text-sm font-medium text-gray-600 mb-1">Especialidade</label>
+                <input type="text" name="especialidade" required placeholder="Ex: Oncologia" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['especialidade']) ? htmlspecialchars($_POST['especialidade']) : '' ?>">
             </div>
 
             <div>
@@ -120,14 +112,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="text" name="telefone" required placeholder="(00) 00000-0000" class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['telefone']) ? htmlspecialchars($_POST['telefone']) : '' ?>">
             </div>
 
-            <div>
-                <label class="block text-sm font-medium text-gray-600 mb-1">Endereço</label>
-                <input type="text" name="endereco" required class="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition" value="<?= isset($_POST['endereco']) ? htmlspecialchars($_POST['endereco']) : '' ?>">
-            </div>
-
             <div class="flex gap-3 pt-2">
                 <button type="submit" class="bg-blue-800 text-white text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-blue-700 transition">Cadastrar</button>
-                <a href="listar.php" class="bg-gray-100 text-gray-600 text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-gray-200 transition">Cancelar</a>
+                <a href="listar.php" class="bg-gray-100 text-gray-600 text-sm font-semibold px-6 py-2.5 rounded-lg hover:bg-red-200 transition">Cancelar</a>
             </div>
 
         </form>

@@ -1,13 +1,12 @@
 <?php
 session_start();
-if (!isset($_session['usuario_id'])) {
+if (!isset($_SESSION['usuario_id'])) {
     header('location: ../login.php');
     exit;
 }
 
-$conexao = new PDO ('mysql:host=mysql;dbname=hospital_db;charset=utf81', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+require_once '../config/conexao.php';
+
 //busca consultas cadastradas com as informações, 
 $stmt = $conexao->query("
     SELECT c.*, p.nome AS nome_paciente, m.nome AS nome_medico, m.especialidade
@@ -17,9 +16,9 @@ $stmt = $conexao->query("
     ORDER BY c.data_hora DESC
 ");
 //pega registros da consulta
-$consultas = stmt->fetchAll();
-?>
+$consultas = $stmt->fetchAll();
 
+?>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -132,6 +131,5 @@ $consultas = stmt->fetchAll();
         </table>
     </div>
 </div>
-
 </body>
 </html>

@@ -5,8 +5,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_perfil'] !== 'admin') 
     exit;
 }
 
-$conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require_once '../config/conexao.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -17,13 +16,13 @@ if (!$id) {
 
 // Não pode excluir o próprio usuário logado
 if ($id == $_SESSION['usuario_id']) {
-    header('Location: listar.php?erro=Você não pode excluir seu próprio usuário!');
+    header('Location: listar.php?status=erro');
     exit;
 }
 
 $stmt = $conexao->prepare("DELETE FROM usuarios WHERE id = :id");
 $stmt->execute([':id' => $id]);
 
-header('Location: listar.php?sucesso=Usuário excluído com sucesso!');
+header('Location: listar.php?status=sucesso');
 exit;
 ?>

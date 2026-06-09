@@ -5,9 +5,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['usuario_perfil'] !== 'admin') 
     exit;
 }
 
-$conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-$conexao->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+require_once '../config/conexao.php';
 
 $id = $_GET['id'] ?? null;
 if (!$id) {
@@ -55,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt = $conexao->prepare("UPDATE usuarios SET nome = :nome, email = :email, perfil = :perfil WHERE id = :id");
                 $stmt->execute([':nome' => $nome, ':email' => $email, ':perfil' => $perfil, ':id' => $id]);
             }
-            header('Location: listar.php?sucesso=Usuário atualizado com sucesso!');
+            header('Location: listar.php?status=sucesso');
             exit;
         }
     }

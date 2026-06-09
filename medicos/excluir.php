@@ -5,8 +5,7 @@ if (!isset($_SESSION['usuario_id'])) {
     exit;
 }
 
-$conexao = new PDO('mysql:host=mysql;dbname=hospital_db;charset=utf8', 'hospital_user', 'hospital123');
-$conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require_once '../config/conexao.php';
 
 $id = $_GET['id'] ?? null;
 
@@ -20,13 +19,13 @@ $stmt->execute([':id' => $id]);
 $total = $stmt->fetchColumn();
 
 if ($total > 0) {
-    header('Location: listar.php?erro=Não foi possível excluir — o médico já possui consultas cadastradas.');
+    header('Location: listar.php?status=erro');
     exit;
 }
 
 $stmt = $conexao->prepare("DELETE FROM medicos WHERE id = :id");
 $stmt->execute([':id' => $id]);
 
-header('Location: listar.php?sucesso=Médico excluído com sucesso!');
+header('Location: listar.php?status=sucesso');
 exit;
 ?>
